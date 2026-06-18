@@ -6,6 +6,7 @@
     "configurations": [
         {
             "name": "Debug Cat Shelter",
+            "cwd": "${workspaceFolder}",
             "program": "${workspaceFolder}./src/index.js",
             "request": "launch",
             "skipFiles": [
