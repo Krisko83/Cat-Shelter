@@ -1,6 +1,6 @@
 
 
-export function showHomeView(homePage, cats) {
+export function renderHomeView(homePage, cats) {
     const catTemplate = (cat) =>
                 `<li>
                     <img src="${cat.imageUrl}" alt="${cat.name}">
