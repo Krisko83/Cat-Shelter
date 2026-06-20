@@ -1,10 +1,28 @@
 import http from 'http';
 import fs from 'fs/promises';
-import { writeHtmlResponse, readHtmlFile ,readCssFile, writeCssResponce} from './utility.js';
+import { writeHtmlResponse, readHtmlFile ,readCssFile, writeCssResponce, addBreed, readBreed} from './utility.js';
 import cats from './cats.js';
 import { renderHomeView } from './homeView.js';
+import { renderShelterView} from './shelter-catView.js';
+ 
 
 const server = http.createServer(async (req, res) => {
+    console.log(readBreed());
+    
+    if(req.method === 'POST') {
+        if(req.url === '/cats/add-breed') {
+            let body = '';
+            req.on('data' , (chunk) => {
+                body += chunk;
+            })
+            req.on('end', async () => {
+                const formData = new URLSearchParams(body);
+                const breedName = formData.get('breed');
+                addBreed(breedName);
+            })
+        }
+        return res.writeHead(302, { location: '/'}).end();
+    };
 
     if (req.url === '/content/styles/site.css') {
         const style = await readCssFile('./content/styles/site.css')
@@ -24,6 +42,7 @@ const server = http.createServer(async (req, res) => {
     if (req.url === '/') {
         let homePage = await readHtmlFile('./views/home/index.html');
         homePage = renderHomeView(homePage, cats)
+    
         writeHtmlResponse(res, homePage);
     };
 
@@ -31,11 +50,15 @@ const server = http.createServer(async (req, res) => {
         let editView = await readHtmlFile('./views/editCat.html');
         writeHtmlResponse(res, editView);
     };
-
-    if (req.url === '/shelter-cat') {
+ 
+    if(req.url.startsWith('/shelter-cat/')) {
+        const id = req.url.split('/')[2];
+ 
         let catShelterView = await readHtmlFile('./views/catShelter.html');
-        writeHtmlResponse(res, catShelterView);
-    };
+        const template = renderShelterView(id, cats, catShelterView)  
+        
+        writeHtmlResponse(res, template);
+    }
 
 });
 

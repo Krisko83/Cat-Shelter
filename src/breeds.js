@@ -10,3 +10,5 @@ const catBreeds = [
   { id: 9, breed: "Scottish Fold" },
   { id: 10, breed: "Birman" }
 ];
+
+export default catBreeds;

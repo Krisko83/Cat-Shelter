@@ -1,5 +1,3 @@
-
-
 export function renderHomeView(homePage, cats) {
     const catTemplate = (cat) =>
                 `<li>
@@ -8,8 +6,8 @@ export function renderHomeView(homePage, cats) {
                     <p><span>Breed: </span>${cat.breed}</p>
                     <p><span>Description: </span>${cat.description}</p>
                     <ul class="buttons">
-                        <li class="btn edit"><a href="/edit-cat">Change Info</a></li>
-                        <li class="btn delete"><a href="/shelter-cat">New Home</a></li>
+                        <li class="btn edit"><a href="/edit-cat/${cat.id}">Change Info</a></li>
+                        <li class="btn delete"><a href="/shelter-cat/${cat.id}">New Home</a></li>
                     </ul>
                 </li>`
 
