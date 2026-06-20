@@ -2,7 +2,7 @@ import { readHtmlFile } from "./utility.js"
 
 export function renderShelterView (id, cats, catShelterView) {
     const cat = cats.find(c => c.id === id);
- console.log(cat); 
+  
     const catShelterTemp = shelterViewTemplate(cat);
     return catShelterView.replaceAll('{{shelter}}', catShelterTemp)
 }

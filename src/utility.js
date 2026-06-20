@@ -1,5 +1,6 @@
 import fs from 'fs/promises';
 import breeds from './breeds.js';
+import {v4} from 'uuid';
 
 export async function readHtmlFile(path) {
     const htmlFile = await fs.readFile(path, 'utf-8');
@@ -27,7 +28,7 @@ export function writeCssResponce(res, cssFile) {
 
 export function addBreed(breed) {
     const newBreed = {
-        id: 11,
+        id: v4(),
         breed
     }
     breeds.push(newBreed);
