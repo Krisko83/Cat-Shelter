@@ -37,3 +37,10 @@ export function addBreed(breed) {
 export function readBreed() {
     return breeds;
 }
+
+export function breedOptions() {
+     return readBreed().map(breed => `<option value="${breed.id}">${breed.breed}</option>`);
+};
+
+
+ 

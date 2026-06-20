@@ -1,6 +1,6 @@
 import http from 'http';
 import fs from 'fs/promises';
-import { writeHtmlResponse, readHtmlFile ,readCssFile, writeCssResponce, addBreed, readBreed} from './utility.js';
+import { writeHtmlResponse, readHtmlFile ,readCssFile, writeCssResponce, addBreed, readBreed, breedOptions} from './utility.js';
 import cats from './cats.js';
 import { renderHomeView } from './homeView.js';
 import { renderShelterView} from './shelter-catView.js';
@@ -35,7 +35,8 @@ const server = http.createServer(async (req, res) => {
     };
 
     if (req.url === '/cats/add-cat') {
-        const addCat = await readHtmlFile('./views/addCat.html')
+        let addCat = await readHtmlFile('./views/addCat.html')
+        addCat = addCat.replace('{{breedOptions}}', breedOptions())
         writeHtmlResponse(res, addCat);
     };
 
