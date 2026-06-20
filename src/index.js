@@ -1,18 +1,21 @@
 import http from 'http';
 import fs from 'fs/promises';
-import { writeHtmlResponse, readHtmlFile ,readCssFile, writeCssResponce, addBreed, readBreed, breedOptions} from './utility.js';
+import { writeHtmlResponse, readHtmlFile, readCssFile, writeCssResponce, addBreed, readBreed, breedOptions, addCat, readCats } from './utility.js';
 import cats from './cats.js';
 import { renderHomeView } from './homeView.js';
-import { renderShelterView} from './shelter-catView.js';
- 
+import { renderShelterView } from './shelter-catView.js';
+
 
 const server = http.createServer(async (req, res) => {
-    console.log(readBreed());
-    
-    if(req.method === 'POST') {
-        if(req.url === '/cats/add-breed') {
+//  console.log(readCats());
+ 
+
+    if (req.method === 'POST') {
+
+        if (req.url === '/cats/add-breed') {
             let body = '';
-            req.on('data' , (chunk) => {
+
+            req.on('data', (chunk) => {
                 body += chunk;
             })
             req.on('end', async () => {
@@ -20,8 +23,32 @@ const server = http.createServer(async (req, res) => {
                 const breedName = formData.get('breed');
                 addBreed(breedName);
             })
+             return res.writeHead(302, { location: '/' }).end();
         }
-        return res.writeHead(302, { location: '/'}).end();
+
+        if (req.url === '/cats/add-cat') {
+            let body = '';
+
+            req.on('data', (chunk) => {
+                body += chunk
+            })
+            req.on('end', async () => {
+                const formData = new URLSearchParams(body);
+                console.log(formData);
+                
+                const name = formData.get('name');
+                const description = formData.get('description')
+                const imageURL = formData.get('imageURL');
+                const breed = formData.get('breed');
+         console.log(imageURL);
+         
+                addCat(name, imageURL, breed, description);
+
+            })            
+             return res.writeHead(302, { location: '/' }).end();
+        }
+
+     
     };
 
     if (req.url === '/content/styles/site.css') {
@@ -43,7 +70,7 @@ const server = http.createServer(async (req, res) => {
     if (req.url === '/') {
         let homePage = await readHtmlFile('./views/home/index.html');
         homePage = renderHomeView(homePage, cats)
-    
+
         writeHtmlResponse(res, homePage);
     };
 
@@ -51,13 +78,13 @@ const server = http.createServer(async (req, res) => {
         let editView = await readHtmlFile('./views/editCat.html');
         writeHtmlResponse(res, editView);
     };
- 
-    if(req.url.startsWith('/shelter-cat/')) {
+
+    if (req.url.startsWith('/shelter-cat/')) {
         const id = req.url.split('/')[2];
- 
+
         let catShelterView = await readHtmlFile('./views/catShelter.html');
-        const template = renderShelterView(id, cats, catShelterView)  
-        
+        const template = renderShelterView(id, cats, catShelterView)
+
         writeHtmlResponse(res, template);
     }
 
