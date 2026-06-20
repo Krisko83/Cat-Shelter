@@ -2,11 +2,10 @@ export function renderHomeView(homePage, cats, filter = {}) {
 
     if (filter.name) {
         cats = cats.filter(cat => cat.name.toLowerCase().includes(filter.name.toLowerCase()));
-    }
-    console.log(cats);
-   
+    }   
     
-    homePage = homePage.replace('{{cats}}', cats.map(cat => catTemplate(cat)).join('\n'));
+    homePage = homePage.replace('{{cats}}', cats.map(cat => catTemplate(cat)).join('\n'))
+    .replace('{{name}}', filter.name || '');
     console.log(homePage);
 
     return homePage;
