@@ -39,8 +39,9 @@ export function readBreed() {
     return breeds;
 }
 
-export function breedOptions() {
-     return readBreed().map(breed => `<option value="${breed.id}">${breed.breed}</option>`);
+export function breedOptions(selectedBreed) {
+
+     return readBreed().map(breed => `<option value="${breed.id}" ${breed.breed === selectedBreed ? ' selected' : ''}>${breed.breed}</option>`);
 };
 
 export function readCats(){
@@ -48,8 +49,9 @@ export function readCats(){
 }
 
 export function addCat(name, imageUrl, breedid, description) {
-    const breed = breeds.find(b => b.id === breedid).breed;
- 
+    // const breed = breeds.find(breed => breed.id === breedid).breed;
+    const breed = getBreedById(breedid).breed;
+    
     const newCat = {
         id: v4(), 
         name, 
@@ -58,4 +60,35 @@ export function addCat(name, imageUrl, breedid, description) {
         description
     }
     cats.push(newCat)
+};
+
+export function getCatById(catId) {
+    return cats.find(cat => cat.id === catId);
+}
+
+export function getBreedById(breedId) {
+    console.log(breedId);
+    
+    const breed = breeds.find(b => b.id === breedId);
+    console.log('value' ,breed);
+    
+    return breed
+}
+
+export function editCat(catId, catData) {
+    const catIndex = cats.findIndex(cat => cat.id === catId);
+
+    const breedName = getBreedById(catData.breed).breed;
+
+    cats[catIndex] = {
+        id: catId,
+        ...catData,
+        breed: breedName
+    }
+    return true;
+}
+
+export function deleteCat(catId) {
+    const catIndex = cats.findIndex(cat => cat.id = catId);
+    cats.splice(catIndex, 1)
 }

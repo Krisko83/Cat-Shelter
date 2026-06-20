@@ -1,14 +1,15 @@
 import http from 'http';
 import fs from 'fs/promises';
-import { writeHtmlResponse, readHtmlFile, readCssFile, writeCssResponce, addBreed, readBreed, breedOptions, addCat, readCats } from './utility.js';
+import { writeHtmlResponse, readHtmlFile, readCssFile, writeCssResponce, addBreed, readBreed, breedOptions, addCat, readCats, getCatById, editCat, deleteCat } from './utility.js';
 import cats from './cats.js';
 import { renderHomeView } from './homeView.js';
 import { renderShelterView } from './shelter-catView.js';
+import { renderEditView } from './editView,js';
 
 
 const server = http.createServer(async (req, res) => {
-//  console.log(readCats());
- 
+    //  console.log(readCats());
+
 
     if (req.method === 'POST') {
 
@@ -23,10 +24,10 @@ const server = http.createServer(async (req, res) => {
                 const breedName = formData.get('breed');
                 addBreed(breedName);
             })
-             return res.writeHead(302, { location: '/' }).end();
+            return res.writeHead(302, { location: '/' }).end();
         }
 
-        if (req.url === '/cats/add-cat') {
+        if (req.url === '/add-cat') {
             let body = '';
 
             req.on('data', (chunk) => {
@@ -34,21 +35,50 @@ const server = http.createServer(async (req, res) => {
             })
             req.on('end', async () => {
                 const formData = new URLSearchParams(body);
-                console.log(formData);
-                
+
                 const name = formData.get('name');
                 const description = formData.get('description')
                 const imageURL = formData.get('imageURL');
                 const breed = formData.get('breed');
-         console.log(imageURL);
-         
+
                 addCat(name, imageURL, breed, description);
 
-            })            
-             return res.writeHead(302, { location: '/' }).end();
+            })
+            return res.writeHead(302, { location: '/' }).end();
         }
 
-     
+        if (req.url.startsWith('/edit-cat/')) {
+            const catId = req.url.split('/').pop();
+
+            let body = '';
+
+            req.on('data', (chunk) => {
+                body += chunk
+            })
+            req.on('end', async () => {
+                const formData = new URLSearchParams(body);
+
+                const name = formData.get('name');
+                const description = formData.get('description')
+                const imageURL = formData.get('imageURL');
+                const breed = formData.get('breed');
+
+                editCat(catId, { name, imageURL, breed, description });
+
+
+            })
+            return res.writeHead(302, { location: '/' }).end();
+        }
+
+        if (req.url.startsWith('/shelter-cat/')) {
+            const id = req.url.split('/').pop();
+
+            deleteCat(id);
+
+            return res.writeHead(302, { location: '/' }).end();
+        }
+
+
     };
 
     if (req.url === '/content/styles/site.css') {
@@ -74,18 +104,32 @@ const server = http.createServer(async (req, res) => {
         writeHtmlResponse(res, homePage);
     };
 
-    if (req.url === '/edit-cat') {
+    if (req.url.startsWith('/edit-cat/')) {
+        const catId = req.url.split('/').pop();
+
         let editView = await readHtmlFile('./views/editCat.html');
+
+        editView = renderEditView(catId, cats, editView);
+
         writeHtmlResponse(res, editView);
     };
 
     if (req.url.startsWith('/shelter-cat/')) {
-        const id = req.url.split('/')[2];
+        const id = req.url.split('/').pop();
 
         let catShelterView = await readHtmlFile('./views/catShelter.html');
         const template = renderShelterView(id, cats, catShelterView)
 
         writeHtmlResponse(res, template);
+    }
+
+    if (req.url.startsWith('/search')) {
+        const params = new URLSearchParams(req.url.split('?')[1]);
+        const name = params.get('name');
+        let homePage = await readHtmlFile('./views/home/index.html');
+
+        homePage = renderHomeView(homePage, cats, { name })
+        writeHtmlResponse(res, homePage);
     }
 
 });
