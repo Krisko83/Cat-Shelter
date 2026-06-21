@@ -1,84 +1,62 @@
 import http from 'http';
-import fs from 'fs/promises';
-import { writeHtmlResponse, readHtmlFile, readCssFile, writeCssResponce, addBreed, readBreed, breedOptions, addCat, readCats, getCatById, editCat, deleteCat } from './utility.js';
-import cats from './cats.js';
+import { writeHtmlResponse, readHtmlFile, readCssFile, writeCssResponce, readFormData } from './utility.js';
 import { renderHomeView } from './homeView.js';
 import { renderShelterView } from './shelter-catView.js';
 import { renderEditView } from './editView,js';
-
+import { addBreed, readBreed, breedOptions } from './breedService.js';
+import { addCat, readCats, getCatById, editCat, deleteCat } from './catService.js';
 
 const server = http.createServer(async (req, res) => {
-    //  console.log(readCats());
-
 
     if (req.method === 'POST') {
 
         if (req.url === '/cats/add-breed') {
-            let body = '';
+            const formData = await readFormData(req);
+            const breedName = formData.get('breed');
+            addBreed(breedName);
 
-            req.on('data', (chunk) => {
-                body += chunk;
-            })
-            req.on('end', async () => {
-                const formData = new URLSearchParams(body);
-                const breedName = formData.get('breed');
-                addBreed(breedName);
-            })
             return res.writeHead(302, { location: '/' }).end();
         }
 
         if (req.url === '/add-cat') {
-            let body = '';
+            const formData = await readFormData(req);
 
-            req.on('data', (chunk) => {
-                body += chunk
-            })
-            req.on('end', async () => {
-                const formData = new URLSearchParams(body);
+            const catDate = {
+                name: formData.get('name'),
+                description: formData.get('description'),
+                imageUrl: formData.get('imageUrl'),
+                breed: formData.get('breed')
+            };
 
-                const name = formData.get('name');
-                const description = formData.get('description')
-                const imageUrl = formData.get('imageUrl');
-                const breed = formData.get('breed');
- 
-                addCat(name, imageUrl, breed, description);
+            addCat(catDate);
 
-            })
             return res.writeHead(302, { location: '/' }).end();
-        }
+        };
 
         if (req.url.startsWith('/edit-cat/')) {
             const catId = req.url.split('/').pop();
 
-            let body = '';
+            const formData = await readFormData(req);
 
-            req.on('data', (chunk) => {
-                body += chunk
-            })
-            req.on('end', async () => {
-                const formData = new URLSearchParams(body);
+            const catDate = {
+                name: formData.get('name'),
+                description: formData.get('description'),
+                imageUrl: formData.get('imageUrl'),
+                breed: formData.get('breed')
+            }
 
-                const name = formData.get('name');
-                const description = formData.get('description')
-                const imageUrl = formData.get('imageUrl');
-                const breed = formData.get('breed');
+            editCat(catId, catDate);
 
-                editCat(catId, { name, imageUrl, breed, description });
-
-
-            })
             return res.writeHead(302, { location: '/' }).end();
         }
 
         if (req.url.startsWith('/shelter-cat/')) {
             const id = req.url.split('/').pop();
-            
+
             deleteCat(id);
 
             return res.writeHead(302, { location: '/' }).end();
         }
-    
-
     };
 
     if (req.url === '/content/styles/site.css') {
@@ -99,17 +77,17 @@ const server = http.createServer(async (req, res) => {
 
     if (req.url === '/') {
         let homePage = await readHtmlFile('./views/home/index.html');
-        homePage = renderHomeView(homePage, cats)
+        homePage = renderHomeView(homePage)
 
         writeHtmlResponse(res, homePage);
     };
 
-    if (req.url.startsWith('/edit-cat')) {    
-        const catId = req.url.split('/').pop();        
+    if (req.url.startsWith('/edit-cat')) {
+        const catId = req.url.split('/').pop();
         let editView = await readHtmlFile('./views/editCat.html');
 
         editView = await renderEditView(catId, editView);
-         
+
         writeHtmlResponse(res, editView);
     };
 
@@ -117,7 +95,7 @@ const server = http.createServer(async (req, res) => {
         const id = req.url.split('/').pop();
 
         let catShelterView = await readHtmlFile('./views/catShelter.html');
-        const template = await renderShelterView(id, cats, catShelterView)
+        const template = await renderShelterView(id, catShelterView)
 
         writeHtmlResponse(res, template);
     }
@@ -127,7 +105,7 @@ const server = http.createServer(async (req, res) => {
         const name = params.get('name');
         let homePage = await readHtmlFile('./views/home/index.html');
 
-        homePage = renderHomeView(homePage, cats, { name })
+        homePage = renderHomeView(homePage, { name })
         writeHtmlResponse(res, homePage);
     }
 

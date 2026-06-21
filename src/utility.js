@@ -1,7 +1,4 @@
-import fs from 'fs/promises';
-import breeds from './breeds.js';
-import { v4 } from 'uuid';
-import cats from './cats.js'
+import fs from 'fs/promises'; 
 
 export async function readHtmlFile(path) {
     const htmlFile = await fs.readFile(path, 'utf-8');
@@ -28,77 +25,22 @@ export function writeCssResponce(res, cssFile) {
     return res.end();
 };
 
-export function addBreed(breed) {
-    const newBreed = {
-        id: v4(),
-        breed
-    }
-    breeds.push(newBreed);
+export function readFormData(req) {
+    return new Promise((resolve, reject) => {
+        let body = '';
+
+        req.on('data', (chunk) => {
+            body += chunk;
+        })
+        req.on('end', async () => {
+            const formData = new URLSearchParams(body);
+            resolve(formData)
+        })
+    });
 };
-
-export function readBreed() {
-    return breeds;
-}
-
-export function breedOptions(selectedBreed) {
-
-    return readBreed().map(breed => `<option value="${breed.id}" ${breed.breed === selectedBreed ? ' selected' : ''}>${breed.breed}</option>`);
-};
-
-export function readCats() {
-    return cats;
-}
-
-export function addCat(name, imageUrl, breedId, description) {
-    // const breed = breeds.find(breed => breed.id === breedid).breed;
-    const breed = getBreedById(breedId).breed;
-
-    const newCat = {
-        id: v4(),
-        name,
-        imageUrl,
-        breed,
-        description
-    };
-
-    cats.push(newCat)
-};
-
-export function getCatById(catId) {
-    return cats.find(cat => cat.id === catId);
-}
-
-export function getBreedById(breedId) {
-
-    const breed = breeds.find(b => b.id === breedId);
-
-
-    return breed
-}
-
-export function editCat(catId, catData) {
-    const catIndex = cats.findIndex(cat => cat.id === catId);
-
-    const breedName = getBreedById(catData.breed).breed;
-
-    cats[catIndex] = {
-        id: catId,
-        ...catData,
-        breed: breedName
-    };
-
-    return true;
-}
-
-export function deleteCat(catId) {
-    const catIndex = cats.findIndex(cat => cat.id === catId);
-
-    cats.splice(catIndex, 1)
-}
 
 export async function renderNotFound() {
     return await readHtmlFile('./views/notFound.html');
-   
+
 };
 
- 

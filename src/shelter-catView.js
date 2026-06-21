@@ -1,7 +1,9 @@
-import { getBreedById, readHtmlFile, renderNotFound } from "./utility.js"
+import { readHtmlFile, renderNotFound } from "./utility.js"
+import { getBreedById } from "./breedService.js";
+import { readCats } from "./catService.js";
 
-export function renderShelterView (id, cats, catShelterView) {
-    const cat = cats.find(c => c.id === id);
+export function renderShelterView (id, catShelterView) {
+    const cat = readCats().find(c => c.id === id);
    
     if(!cat) {
         return renderNotFound();

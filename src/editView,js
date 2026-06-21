@@ -1,6 +1,6 @@
-import { breedOptions, getBreedById, readCats, renderNotFound } from "./utility.js";
-import cats from './cats.js';
-
+import { renderNotFound } from "./utility.js"; 
+import { breedOptions, getBreedById } from "./breedService.js";
+import { readCats } from "./catService.js";
 
 export function renderEditView(id, editView) {
     const cat = readCats().find(c => c.id === id);

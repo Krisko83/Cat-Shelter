@@ -1,4 +1,4 @@
-import { readCats } from "./utility.js";
+import { readCats } from "./catService.js";
 
 export function renderHomeView(homePage, filter = {}) {
     let cats = readCats();
