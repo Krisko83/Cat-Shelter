@@ -5,6 +5,7 @@ import cats from './cats.js'
 
 export async function readHtmlFile(path) {
     const htmlFile = await fs.readFile(path, 'utf-8');
+
     return htmlFile;
 };
 
@@ -94,3 +95,10 @@ export function deleteCat(catId) {
 
     cats.splice(catIndex, 1)
 }
+
+export async function renderNotFound() {
+    return await readHtmlFile('./views/notFound.html');
+   
+};
+
+ 

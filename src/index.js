@@ -104,15 +104,12 @@ const server = http.createServer(async (req, res) => {
         writeHtmlResponse(res, homePage);
     };
 
-    if (req.url.startsWith('/edit-cat')) {
-    
-        const catId = req.url.split('/').pop();
-        console.log('The id is:',catId);
-        
+    if (req.url.startsWith('/edit-cat')) {    
+        const catId = req.url.split('/').pop();        
         let editView = await readHtmlFile('./views/editCat.html');
 
-        editView = renderEditView(catId, editView);
-
+        editView = await renderEditView(catId, editView);
+         
         writeHtmlResponse(res, editView);
     };
 
@@ -120,7 +117,7 @@ const server = http.createServer(async (req, res) => {
         const id = req.url.split('/').pop();
 
         let catShelterView = await readHtmlFile('./views/catShelter.html');
-        const template = renderShelterView(id, cats, catShelterView)
+        const template = await renderShelterView(id, cats, catShelterView)
 
         writeHtmlResponse(res, template);
     }

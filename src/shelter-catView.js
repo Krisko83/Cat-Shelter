@@ -1,8 +1,11 @@
-import { getBreedById, readHtmlFile } from "./utility.js"
+import { getBreedById, readHtmlFile, renderNotFound } from "./utility.js"
 
 export function renderShelterView (id, cats, catShelterView) {
     const cat = cats.find(c => c.id === id);
    
+    if(!cat) {
+        return renderNotFound();
+    }
     const catShelterTemp = shelterViewTemplate(cat);
     return catShelterView.replaceAll('{{shelter}}', catShelterTemp)
 }

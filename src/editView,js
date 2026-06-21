@@ -1,19 +1,21 @@
-import { breedOptions, getBreedById, readCats } from "./utility.js";
+import { breedOptions, getBreedById, readCats, renderNotFound } from "./utility.js";
 import cats from './cats.js';
 
 
 export function renderEditView(id, editView) {
- 
-    
     const cat = readCats().find(c => c.id === id);
  
+    if (!cat) {
+        return renderNotFound();
+    }
+
     editView = editView
         .replace('{{catName}}', cat.name)
         .replace('{{description}}', cat.description)
         .replace('{{imageUrl}}', cat.imageUrl)
         .replace('{{breedOptions}}', breedOptions(cat.breed));
 
-        return editView
+    return editView;
 }
 
- 
+
