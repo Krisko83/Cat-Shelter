@@ -8,7 +8,7 @@ export function renderShelterView (id, cats, catShelterView) {
 }
 
 const shelterViewTemplate = (cat) => `
-        <form action ="/shelter-cat/${cat.id}" method="post" class="cat-form">
+        <form method="post" class="cat-form">
             <h2>Shelter the cat</h2>
             <img src="${cat.imageUrl}" alt="cat-image">
             <label for="name">Name</label>
