@@ -38,10 +38,10 @@ const server = http.createServer(async (req, res) => {
 
                 const name = formData.get('name');
                 const description = formData.get('description')
-                const imageURL = formData.get('imageURL');
+                const imageUrl = formData.get('imageUrl');
                 const breed = formData.get('breed');
-
-                addCat(name, imageURL, breed, description);
+ 
+                addCat(name, imageUrl, breed, description);
 
             })
             return res.writeHead(302, { location: '/' }).end();
@@ -60,10 +60,10 @@ const server = http.createServer(async (req, res) => {
 
                 const name = formData.get('name');
                 const description = formData.get('description')
-                const imageURL = formData.get('imageURL');
+                const imageUrl = formData.get('imageUrl');
                 const breed = formData.get('breed');
 
-                editCat(catId, { name, imageURL, breed, description });
+                editCat(catId, { name, imageUrl, breed, description });
 
 
             })
@@ -72,12 +72,12 @@ const server = http.createServer(async (req, res) => {
 
         if (req.url.startsWith('/shelter-cat/')) {
             const id = req.url.split('/').pop();
-
+            
             deleteCat(id);
 
             return res.writeHead(302, { location: '/' }).end();
         }
-
+    
 
     };
 
@@ -104,12 +104,14 @@ const server = http.createServer(async (req, res) => {
         writeHtmlResponse(res, homePage);
     };
 
-    if (req.url.startsWith('/edit-cat/')) {
+    if (req.url.startsWith('/edit-cat')) {
+    
         const catId = req.url.split('/').pop();
-
+        console.log('The id is:',catId);
+        
         let editView = await readHtmlFile('./views/editCat.html');
 
-        editView = renderEditView(catId, cats, editView);
+        editView = renderEditView(catId, editView);
 
         writeHtmlResponse(res, editView);
     };

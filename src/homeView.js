@@ -1,12 +1,15 @@
-export function renderHomeView(homePage, cats, filter = {}) {
+import { readCats } from "./utility.js";
+
+export function renderHomeView(homePage, filter = {}) {
+    let cats = readCats();
 
     if (filter.name) {
         cats = cats.filter(cat => cat.name.toLowerCase().includes(filter.name.toLowerCase()));
-    }   
-    
-    homePage = homePage.replace('{{cats}}', cats.map(cat => catTemplate(cat)).join('\n'))
-    .replace('{{name}}', filter.name || '');
-    console.log(homePage);
+    }
+
+    homePage = homePage
+        .replace('{{cats}}', `<ul>${cats.map(cat => catTemplate(cat)).join('\n')}</ul>`)
+        .replace('{{name}}', filter.name || '');
 
     return homePage;
 }

@@ -22,16 +22,14 @@
         </nav>
         <h1>Cat Shelter</h1>
         <form action="/search" method="GET">
-            <input type="text" name="name" value={{name}}>
+            <input type="text" name="name" value="{{name}}">
             <button>Search</button>
         </form>
     </header>
 
     <main>
-        <section class="cats">
-            <ul>
-                {{cats}}              
-            </ul>
+        <section class="cats">             
+                {{cats}}                           
         </section>
     </main>
 

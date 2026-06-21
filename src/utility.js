@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import breeds from './breeds.js';
-import {v4} from 'uuid';
+import { v4 } from 'uuid';
 import cats from './cats.js'
 
 export async function readHtmlFile(path) {
@@ -41,24 +41,25 @@ export function readBreed() {
 
 export function breedOptions(selectedBreed) {
 
-     return readBreed().map(breed => `<option value="${breed.id}" ${breed.breed === selectedBreed ? ' selected' : ''}>${breed.breed}</option>`);
+    return readBreed().map(breed => `<option value="${breed.id}" ${breed.breed === selectedBreed ? ' selected' : ''}>${breed.breed}</option>`);
 };
 
-export function readCats(){
+export function readCats() {
     return cats;
 }
 
-export function addCat(name, imageUrl, breedid, description) {
+export function addCat(name, imageUrl, breedId, description) {
     // const breed = breeds.find(breed => breed.id === breedid).breed;
-    const breed = getBreedById(breedid).breed;
-    
+    const breed = getBreedById(breedId).breed;
+
     const newCat = {
-        id: v4(), 
-        name, 
+        id: v4(),
+        name,
         imageUrl,
-        breed, 
+        breed,
         description
-    }
+    };
+
     cats.push(newCat)
 };
 
@@ -67,11 +68,10 @@ export function getCatById(catId) {
 }
 
 export function getBreedById(breedId) {
-    console.log(breedId);
-    
+
     const breed = breeds.find(b => b.id === breedId);
-    console.log('value' ,breed);
-    
+
+
     return breed
 }
 
@@ -84,11 +84,13 @@ export function editCat(catId, catData) {
         id: catId,
         ...catData,
         breed: breedName
-    }
+    };
+
     return true;
 }
 
 export function deleteCat(catId) {
-    const catIndex = cats.findIndex(cat => cat.id = catId);
+    const catIndex = cats.findIndex(cat => cat.id === catId);
+
     cats.splice(catIndex, 1)
 }
